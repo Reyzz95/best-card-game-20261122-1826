@@ -40,4 +40,31 @@ function log(m){S.log.push(m);if(S.log.length>3)S.log.shift();const el=document.
 
 function beep(f){if(S.muted)return;try{const a=new (window.AudioContext||window.webkitAudioContext)();const o=a.createOscillator();o.frequency.value=f;o.connect(a.destination);o.start();o.stop(a.currentTime+0.08);}catch(e){}}
 
-// === PART2 ===
+function render(){
+  const setHp=(who,fillId,textId)=>{const f=document.getElementById(fillId);const t=document.getElementById(textId);if(f)f.style.width=Math.max(0,who.hp/who.max*100)+'%';if(t)t.textContent=Math.max(0,who.hp)+' / '+who.max;};
+  setHp(S.player,'player-hp-fill','player-hp-text');setHp(S.foe,'opponent-hp-fill','opponent-hp-text');
+  const pips=document.getElementById('ember-pips');
+  if(pips){pips.innerHTML='';for(let i=0;i<10;i++){const s=document.createElement('span');s.className='pip'+(i<S.player.ember?' on':'');pips.appendChild(s);}}
+  const tl=document.getElementById('turn-line');if(tl)tl.textContent=S.over?'Duel over.':('Turn '+S.turn+' — play a card ('+S.player.ember+' ember)');
+  const oh=document.getElementById('opponent-hand');
+  if(oh){oh.innerHTML='';for(let i=0;i<S.foe.hand.length;i++){const d=document.createElement('div');d.className='card back';oh.appendChild(d);}}
+  const ph=document.getElementById('player-hand');
+  if(ph){ph.innerHTML='';S.player.hand.forEach((c,i)=>{const d=document.createElement('div');d.className='card'+(c.c>S.player.ember||S.over?' disabled':'');d.innerHTML='<div class="cost">'+c.c+'</div><div class="cname">'+c.n+'</div><div class="cval">'+cardText(c)+'</div><div class="celem">'+c.e+'</div>';d.onclick=()=>playCard(i);ph.appendChild(d);});}
+}
+function cardText(c){if(c.t==='strike')return c.v+' damage';if(c.t==='guard')return '+'+c.v+' block';if(c.t==='mend')return 'Heal '+c.v;if(c.t==='surge')return '+'+c.v+' ember';return '5 dmg + heal 3';}
+function checkEnd(){
+  if(S.foe.hp<=0&&!S.over){S.over=true;beep(880);document.getElementById('win-text').textContent='Cinder falls to 0 HP. The table is yours!';document.getElementById('win-screen').classList.remove('hidden');}
+  else if(S.player.hp<=0&&!S.over){S.over=true;beep(220);document.getElementById('lose-text').textContent='Your HP reached 0. Cinder takes the table.';document.getElementById('lose-screen').classList.remove('hidden');}
+  render();
+}
+function startGame(){
+  ['title-screen','win-screen','lose-screen'].forEach(id=>{const e=document.getElementById(id);if(e)e.classList.add('hidden');});
+  S.turn=1;S.over=false;S.log=[];
+  S.player={hp:30,max:30,block:0,ember:3,hand:[],deck:buildDeck(),disc:[]};
+  S.foe={hp:30,max:30,block:0,ember:3,hand:[],deck:buildDeck(),disc:[]};
+  drawHand(S.player);drawHand(S.foe);
+  log('The duel begins. Play a card!');render();
+}
+
+
+// === PART3 ===
