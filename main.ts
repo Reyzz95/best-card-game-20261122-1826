@@ -1,9 +1,10 @@
-// Ember Duel — an original turn-based card battler (Node 22, standard library only).
-// Two ember-mages duel: play 1 card per turn from a hand of 5, spend ember, reduce Cinder
-// to 0 HP to win. Title screen, live table with both hands and HP bars, victory and defeat
-// screens, mouse + keyboard (1-5 to play, Enter to start, M to mute). The game is plain
-// static files with no network requests. main.ts copies the game and screenshots folders
-// from beside this file to the output dir and writes dossier.json with the vendored library.
+// Ember Duel: A turn-based card battler game built as a local static application.
+// This script copies the game directory and screenshots to the output folder and
+// generates the dossier.json summary using the vendored make.fun library.
+//
+// Serve it locally with `node serve.ts`, then open http://localhost:8080.
+// Outside the grader's container, MAKEFUN_OUTPUT_DIR stands in for /output:
+//   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
 
 import { cpSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';

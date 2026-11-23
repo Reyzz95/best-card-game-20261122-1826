@@ -1,76 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ember Duel</title>
-<link rel="stylesheet" href="style.css">
-<style>
-  .hidden { display: none; }
-</style>
-<script src="game.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ember Duel - Card Battler</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<div id="table">
-  <h1 style="font-size:18px;text-align:center;letter-spacing:2px;color:#d4a017;margin:0 0 12px;">EMBER DUEL</h1>
-
-  <div id="opponent-area">
-    <div style="width:100%;text-align:center;font-size:13px;color:#d4a017;margin-bottom:6px;">CINDER — the rival mage</div>
-  </div>
-  <div id="opponent-hand" class="opponent-area"></div>
-
-  <div id="center" class="center-row">
-    <div id="player-panel" class="hp-panel">
-      <div class="name">YOU</div>
-      <div class="hp-bar"><div id="player-hp-fill" class="hp-fill" style="width:100%"></div></div>
-      <span id="player-hp-text" class="hp-number">30 / 30</span>
+  <div id="game-container">
+    <!-- Top Bar / Audio Mute -->
+    <div id="top-bar">
+      <span class="game-brand">🔥 EMBER DUEL</span>
+      <button id="btn-mute" class="icon-btn" title="Toggle Sound [M]">🔊 Mute</button>
     </div>
-    <div id="opponent-panel" class="hp-panel">
-      <div class="name">CINDER</div>
-      <div class="hp-bar"><div id="opponent-hp-fill" class="hp-fill" style="width:100%"></div></div>
-      <span id="opponent-hp-text" class="hp-number">30 / 30</span>
+
+    <!-- Title Screen -->
+    <div id="screen-title" class="screen active">
+      <div class="title-hero">
+        <h1>EMBER DUEL</h1>
+        <p class="subtitle">A fiery tactical card duel</p>
+      </div>
+      <div class="how-to-box">
+        <h3>How to Play</h3>
+        <ul>
+          <li><strong>Goal:</strong> Reduce rival mage Cinder's HP to 0 before she defeats you.</li>
+          <li><strong>Turns:</strong> Each turn, play 1 card from your hand of 5. Cinder then plays her card.</li>
+          <li><strong>Ember (Mana):</strong> Starts at 3, grows by +1 each turn (max 10). Cards cost 0–4 ember.</li>
+          <li><strong>Card Types:</strong> Strikes (damage), Guards (block), Mends (heal), Surges (+ember), Phoenix (rare strike + heal).</li>
+          <li><strong>Controls:</strong> Click cards or press keys <strong>1–5</strong>. Press <strong>Space/Enter</strong> to start, <strong>M</strong> to mute.</li>
+        </ul>
+      </div>
+      <div class="title-actions">
+        <button id="btn-play" class="primary-btn">PLAY DUEL</button>
+      </div>
+    </div>
+
+    <!-- Game Table Screen -->
+    <div id="screen-game" class="screen">
+      <!-- Rival Area -->
+      <div class="fighter-area rival-area">
+        <div class="fighter-info">
+          <div class="fighter-name">Cinder <span class="glyph">🔥</span></div>
+          <div class="hp-wrapper">
+            <div class="hp-bar-container">
+              <div id="cinder-hp-bar" class="hp-bar" style="width: 100%;"></div>
+            </div>
+            <span id="cinder-hp-text" class="hp-text">30 / 30</span>
+          </div>
+          <div class="fighter-stats">
+            <span id="cinder-block" class="stat-badge block-badge" style="display:none;">🛡️ <span id="cinder-block-val">0</span></span>
+            <span class="stat-badge hand-count-badge">🎴 Hand: <span id="cinder-hand-count">5</span></span>
+          </div>
+        </div>
+        <div id="cinder-hand" class="opponent-hand">
+          <!-- Face-down cards for rival -->
+          <div class="card-back"></div>
+          <div class="card-back"></div>
+          <div class="card-back"></div>
+          <div class="card-back"></div>
+          <div class="card-back"></div>
+        </div>
+      </div>
+
+      <!-- Center Table & Battle Log -->
+      <div class="center-table">
+        <div class="table-status-row">
+          <div id="turn-counter" class="turn-badge">Turn 1</div>
+          <div class="ember-display" title="Available Ember">
+            <span class="ember-label">Ember:</span>
+            <div id="player-ember-pips" class="ember-pips"></div>
+            <span id="player-ember-text" class="ember-num">3/3</span>
+          </div>
+        </div>
+        <div class="battle-log-box">
+          <div id="battle-log" class="battle-log-line">The duel begins in the volcanic arena! Choose your first card.</div>
+        </div>
+      </div>
+
+      <!-- Player Area -->
+      <div class="fighter-area player-area">
+        <div class="fighter-info player-info">
+          <div class="fighter-stats player-stats-top">
+            <span id="player-block" class="stat-badge block-badge" style="display:none;">🛡️ <span id="player-block-val">0</span></span>
+          </div>
+          <div class="hp-wrapper">
+            <div class="hp-bar-container">
+              <div id="player-hp-bar" class="hp-bar" style="width: 100%;"></div>
+            </div>
+            <span id="player-hp-text" class="hp-text">30 / 30</span>
+          </div>
+          <div class="fighter-name">You <span class="glyph">✨</span></div>
+        </div>
+        <!-- Player Hand -->
+        <div id="player-hand" class="player-hand">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Victory Screen -->
+    <div id="screen-victory" class="screen">
+      <div class="end-card victory-card">
+        <div class="end-icon">🏆</div>
+        <h2>VICTORY!</h2>
+        <p>You have extinguished Cinder and claimed mastery of the flame!</p>
+        <div id="victory-stats" class="end-stats"></div>
+        <button id="btn-restart-win" class="primary-btn">PLAY AGAIN</button>
+      </div>
+    </div>
+
+    <!-- Defeat Screen -->
+    <div id="screen-defeat" class="screen">
+      <div class="end-card defeat-card">
+        <div class="end-icon">💀</div>
+        <h2>DEFEAT</h2>
+        <p>Cinder's flames have consumed you. The embers fade to ash...</p>
+        <div id="defeat-stats" class="end-stats"></div>
+        <button id="btn-restart-lose" class="primary-btn">PLAY AGAIN</button>
+      </div>
     </div>
   </div>
 
-  <div id="ember-row" class="pips">
-    <span style="align-self:center;font-size:13px;color:#d4a017;">Ember:</span>
-    <div id="ember-pips" class="pips" style="margin:0;"></div>
-  </div>
-
-  <div id="turn-line" class="turn-counter">Turn 1 — play a card</div>
-  <div id="log-line" class="battle-log">The duel begins. Play a card!</div>
-
-  <div id="player-hand" class="hand"></div>
-
-  <div id="end-turn-row" style="text-align:center;margin-top:16px;">
-    <button id="end-turn">End Turn</button>
-  </div>
-</div>
-
-<div id="title-screen">
-  <div class="overlay-panel">
-    <h1>EMBER DUEL</h1>
-    <p>Play 1 card per turn. Reduce Cinder to 0 HP. Ember refills each turn. Keys 1-5 play cards.</p>
-    <button id="play-button">PLAY</button>
-  </div>
-</div>
-
-<div id="win-screen" class="hidden">
-  <div class="overlay-panel">
-    <h1>VICTORY</h1>
-    <p id="win-text"></p>
-    <button class="play-again">Play Again</button>
-  </div>
-</div>
-
-<div id="lose-screen" class="hidden">
-  <div class="overlay-panel">
-    <h1>DEFEAT</h1>
-    <p id="lose-text"></p>
-    <button class="play-again">Play Again</button>
-  </div>
-</div>
-
+  <script src="game.js"></script>
 </body>
 </html>
