@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ember Duel</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .hidden { display: none; }
+</style>
+<script src="game.js" defer></script>
+</head>
+<body>
+
+<div id="table">
+  <h1 style="font-size:18px;text-align:center;letter-spacing:2px;color:#d4a017;margin:0 0 12px;">EMBER DUEL</h1>
+
+  <div id="opponent-area">
+    <div style="width:100%;text-align:center;font-size:13px;color:#d4a017;margin-bottom:6px;">CINDER — the rival mage</div>
+  </div>
+  <div id="opponent-hand" class="opponent-area"></div>
+
+  <div id="center" class="center-row">
+    <div id="player-panel" class="hp-panel">
+      <div class="name">YOU</div>
+      <div class="hp-bar"><div id="player-hp-fill" class="hp-fill" style="width:100%"></div></div>
+      <span id="player-hp-text" class="hp-number">30 / 30</span>
+    </div>
+    <div id="opponent-panel" class="hp-panel">
+      <div class="name">CINDER</div>
+      <div class="hp-bar"><div id="opponent-hp-fill" class="hp-fill" style="width:100%"></div></div>
+      <span id="opponent-hp-text" class="hp-number">30 / 30</span>
+    </div>
+  </div>
+
+  <div id="ember-row" class="pips">
+    <span style="align-self:center;font-size:13px;color:#d4a017;">Ember:</span>
+    <div id="ember-pips" class="pips" style="margin:0;"></div>
+  </div>
+
+  <div id="turn-line" class="turn-counter">Turn 1 — play a card</div>
+  <div id="log-line" class="battle-log">The duel begins. Play a card!</div>
+
+  <div id="player-hand" class="hand"></div>
+
+  <div id="end-turn-row" style="text-align:center;margin-top:16px;">
+    <button id="end-turn">End Turn</button>
+  </div>
+</div>
+
+<div id="title-screen">
+  <div class="overlay-panel">
+    <h1>EMBER DUEL</h1>
+    <p>Play 1 card per turn. Reduce Cinder to 0 HP. Ember refills each turn. Keys 1-5 play cards.</p>
+    <button id="play-button">PLAY</button>
+  </div>
+</div>
+
+<div id="win-screen" class="hidden">
+  <div class="overlay-panel">
+    <h1>VICTORY</h1>
+    <p id="win-text"></p>
+    <button class="play-again">Play Again</button>
+  </div>
+</div>
+
+<div id="lose-screen" class="hidden">
+  <div class="overlay-panel">
+    <h1>DEFEAT</h1>
+    <p id="lose-text"></p>
+    <button class="play-again">Play Again</button>
+  </div>
+</div>
+
+</body>
+</html>
