@@ -1,16 +1,9 @@
-// A working best-game-01 entry (Node 22, standard library only): the game is this directory's
-// game/ folder, plain static files a desktop browser loads offline (game/index.html and its ES
-// modules, no library and no network request), and the program hands it in. It copies game/ and
-// screenshots/ from beside this file to /output and writes /output/dossier.json, the summary the
-// judge reads, with the vendored make.fun library. A starting point, not a winner: Block Dodger, a
-// plain 2D canvas game where a paddle dodges falling blocks and catches coins, with a title screen,
-// score, lives and levels, game over and restart, flat colours and no sound. Build your own game
-// (any genre, any library you vendor under game/, or none), put your 3 or 4 PNG or JPEG screenshots
-// in screenshots/ (the first by name is the cover) and run it.
-//
-// Serve it locally with `node serve.ts`, then open http://localhost:8080.
-// Outside the grader's container, MAKEFUN_OUTPUT_DIR stands in for /output:
-//   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
+// Ember Duel — an original turn-based card battler (Node 22, standard library only).
+// Two ember-mages duel: play 1 card per turn from a hand of 5, spend ember, reduce Cinder
+// to 0 HP to win. Title screen, live table with both hands and HP bars, victory and defeat
+// screens, mouse + keyboard (1-5 to play, Enter to start, M to mute). The game is plain
+// static files with no network requests. main.ts copies the game and screenshots folders
+// from beside this file to the output dir and writes dossier.json with the vendored library.
 
 import { cpSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
