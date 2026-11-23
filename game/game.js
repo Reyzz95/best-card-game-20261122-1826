@@ -44,7 +44,7 @@ function render(){
   const setHp=(who,fillId,textId)=>{const f=document.getElementById(fillId);const t=document.getElementById(textId);if(f)f.style.width=Math.max(0,who.hp/who.max*100)+'%';if(t)t.textContent=Math.max(0,who.hp)+' / '+who.max;};
   setHp(S.player,'player-hp-fill','player-hp-text');setHp(S.foe,'opponent-hp-fill','opponent-hp-text');
   const pips=document.getElementById('ember-pips');
-  if(pips){pips.innerHTML='';for(let i=0;i<10;i++){const s=document.createElement('span');s.className='pip'+(i<S.player.ember?' on':'');pips.appendChild(s);}}
+  if(pips){pips.innerHTML='';for(let i=0;i<10;i++){const s=document.createElement('span');s.className='pip'+(i<S.player.ember?' filled':'');pips.appendChild(s);}}
   const tl=document.getElementById('turn-line');if(tl)tl.textContent=S.over?'Duel over.':('Turn '+S.turn+' — play a card ('+S.player.ember+' ember)');
   const oh=document.getElementById('opponent-hand');
   if(oh){oh.innerHTML='';for(let i=0;i<S.foe.hand.length;i++){const d=document.createElement('div');d.className='card back';oh.appendChild(d);}}
