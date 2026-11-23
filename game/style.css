@@ -229,3 +229,5 @@ button {
 button:hover {
   background: #ffa640;
 }
+
+#title-screen.hidden, #win-screen.hidden, #lose-screen.hidden { display: none; }
