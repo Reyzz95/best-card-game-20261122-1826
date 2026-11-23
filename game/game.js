@@ -67,4 +67,47 @@ function startGame(){
 }
 
 
-// === PART3 ===
+function applyCard(who,foe,c){
+  if(c.t==='strike'){let d=c.v;if(foe.block>0){const b=Math.min(foe.block,d);foe.block-=b;d-=b;}foe.hp-=d;return 'dealt '+c.v+' damage';}
+  if(c.t==='guard'){who.block+=c.v;return 'gained '+c.v+' block';}
+  if(c.t==='mend'){who.hp=Math.min(who.max,who.hp+c.v);return 'healed '+c.v;}
+  if(c.t==='surge'){who.ember+=c.v;return 'gained '+c.v+' ember';}
+  let d=5;if(foe.block>0){const b=Math.min(foe.block,d);foe.block-=b;d-=b;}foe.hp-=d;who.hp=Math.min(who.max,who.hp+3);return 'dealt 5 damage and healed 3';
+}
+function playCard(i){
+  if(S.over)return;const c=S.player.hand[i];if(!c||c.c>S.player.ember)return;
+  S.player.ember-=c.c;S.player.hand.splice(i,1);S.player.disc.push(c);beep(520);
+  log('You played '+c.n+' — '+applyCard(S.player,S.foe,c)+'.');
+  S.player.block=0;render();checkEnd();if(S.over)return;
+  setTimeout(aiTurn,450);
+}
+function aiTurn(){
+  if(S.over)return;
+  const affordable=S.foe.hand.filter(c=>c.c<=S.foe.ember);
+  let pick=null;
+  if(affordable.length){
+    const lethal=affordable.find(c=>c.t==='strike'&&c.v>=S.player.hp);
+    const hurt=affordable.filter(c=>c.t==='strike').sort((a,b)=>b.v-a.v)[0];
+    const guard=affordable.filter(c=>c.t==='guard').sort((a,b)=>b.v-a.v)[0];
+    pick=lethal||(S.foe.hp<=10&&guard&&!hurt?guard:(hurt||guard||affordable[0]));
+  }
+  if(pick){S.foe.ember-=pick.c;S.foe.hand.splice(S.foe.hand.indexOf(pick),1);S.foe.disc.push(pick);log('Cinder played '+pick.n+' — '+applyCard(S.foe,S.player,pick)+'.');}
+  else log('Cinder passes.');
+  S.foe.block=0;S.turn++;S.player.ember=Math.min(10,S.player.ember+1);S.foe.ember=Math.min(10,S.foe.ember+1);
+  drawHand(S.player);drawHand(S.foe);render();checkEnd();
+}
+function endTurn(){if(!S.over)aiTurn();}
+document.getElementById('play-button').addEventListener('click',startGame);
+document.querySelectorAll('.play-again').forEach(b=>b.addEventListener('click',startGame));
+document.getElementById('end-turn').addEventListener('click',endTurn);
+document.addEventListener('keydown',e=>{
+  if(e.key>='1'&&e.key<='5')playCard(parseInt(e.key,10)-1);
+  else if(e.key==='m'||e.key==='M'){S.muted=!S.muted;}
+  else if(e.key==='Enter'||e.key===' '){if(!document.getElementById('title-screen').classList.contains('hidden')||S.over)startGame();}
+});
+(function init(){
+  if(SHOT==='play'){startGame();S.turn=5;S.player.hp=18;S.foe.hp=14;S.player.ember=5;S.log=[];log('You struck Cinder for 6.');log('Cinder raised a guard.');log('Ember surges through the table.');render();}
+  else if(SHOT==='end'){document.getElementById('win-text').textContent='Cinder falls to 0 HP. The table is yours!';document.getElementById('win-screen').classList.remove('hidden');}
+  else if(SHOT==='lose'){document.getElementById('lose-text').textContent='Your HP reached 0. Cinder takes the table.';document.getElementById('lose-screen').classList.remove('hidden');}
+  else{startGame();document.getElementById('title-screen').classList.remove('hidden');}
+})();
